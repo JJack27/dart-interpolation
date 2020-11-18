@@ -7,13 +7,15 @@ import 'dart:math';
 /// Argument
 ///   - x: List<dynamic>, currently only support double and int.
 ///   - v: List<dynamic>, only support double and int.
-///   - xq: List<dynamic>, only support double and int.
+///   - xq: List<dynamic>, only support double and int. Assuming the xq is ordered;
 /// return
 ///   - List<double>, the interpolation result of xq.
 List<double> cubicSplineInterpolation(
     List<dynamic> x,
     List<dynamic> v,
     List<dynamic> xq){
+  // ans
+  List<double> ans = [];
 
   // Matrix objects. Ease the calculation.
   Array2d M;
@@ -74,13 +76,13 @@ List<double> cubicSplineInterpolation(
       int exp = j - 4 * (i - 2*(x.length - 1))- 1;
 
       // first part
-      iMatrix[i][j] = (exp + 1) * pow(x[i - fromFirstDerivative], exp);
+      iMatrix[i][j] = (exp + 1) * pow(x[i - fromFirstDerivative + 1], exp);
       if(exp < 0){
         iMatrix[i][j] = 0;
       }
 
       // second part
-      iMatrix[i][j+4] = (exp + 1) * -pow(x[i - fromFirstDerivative], exp);
+      iMatrix[i][j+4] = (exp + 1) * -pow(x[i - fromFirstDerivative + 1], exp);
       if(exp < 0){
         iMatrix[i][j+4] = 0;
       }
@@ -134,18 +136,23 @@ List<double> cubicSplineInterpolation(
     R.add(tempRow);
   }
 
-  P = matrixSolve(M, R);
+  for(var row in M){
+    print(row);
+  }
+  P =  matrixSolve(M, R);
+  print(R);
+  // Interpolating xq
+  int counter = 0;
+  for(int i = 0; i < xq.length; i++){
+    if(xq[i] > x[counter + 1] && counter < x.length - 2){
+      counter++;
+    }
+    double p1 = P.elementAt(counter * 4 + 0).elementAt(0);
+    double p2 = P.elementAt(counter * 4 + 1).elementAt(0);
+    double p3 = P.elementAt(counter * 4 + 2).elementAt(0);
+    double p4 = P.elementAt(counter * 4 + 3).elementAt(0);
+    ans.add(p1 + p2 * pow(xq[i], 1) + p3 * pow(xq[i], 2) + p4 * pow(xq[i], 3));
+  }
 
-  print(P);
-
-  return List<double>();
-}
-
-
-void main(){
-  List<double> v = [1,2,3,4,5,6,7];
-  List<double> x = [1,2,3,4,5,6,7];
-  List<double> xq = [1,2,3,4,5,6,7];
-
-  cubicSplineInterpolation(x, v, xq);
+  return ans;
 }
