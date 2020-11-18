@@ -136,11 +136,7 @@ List<double> cubicSplineInterpolation(
     R.add(tempRow);
   }
 
-  for(var row in M){
-    print(row);
-  }
   P =  matrixSolve(M, R);
-  print(R);
   // Interpolating xq
   int counter = 0;
   for(int i = 0; i < xq.length; i++){

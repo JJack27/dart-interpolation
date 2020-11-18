@@ -49,8 +49,6 @@ List<List<double>> envelope(
   for(double i in iPk){
     vPk.add(x[i.toInt() - 1]);
   }
-  print(iPk);
-  print(vPk);
 
   // get the upper envelope
   List yUp = cubicSplineInterpolation(iPk, vPk, xq);
@@ -71,11 +69,11 @@ List<List<double>> envelope(
   }
 
   // get the upper envelope
-  //List yLow = cubicSplineInterpolation(iPk, vPk, xq);
+  List yLow = cubicSplineInterpolation(iPk, vPk, xq);
 
 
 
-  return [yUp, []];
+  return [yUp, yLow];
 }
 
 
