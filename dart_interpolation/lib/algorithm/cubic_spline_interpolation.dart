@@ -1,7 +1,7 @@
 /// Cubic spline interpolation methods
 /// author: yizhou
 
-import 'package:linalg/linalg.dart';
+import 'package:scidart/numdart.dart';
 import 'dart:math';
 /// Cubic interpolation using secondary derivatives
 /// Argument
@@ -16,9 +16,9 @@ List<double> cubicSplineInterpolation(
     List<dynamic> xq){
 
   // Matrix objects. Ease the calculation.
-  Matrix M;
-  Matrix R;
-  Matrix P;
+  Array2d M;
+  Array2d R;
+  Array2d P;
 
   // attributes of iMatrix
   int sizeMatrix = 4 * (x.length - 1);
@@ -119,11 +119,24 @@ List<double> cubicSplineInterpolation(
   iMatrix[nKnot2][sizeMatrix-1] = 6 * (x[x.length-1]);
 
   // Finished initializing the interpolation matrix. Convert them to Matrix objects
-  M = new Matrix(iMatrix);
-  R = new Matrix(response);
-  P = M.inverse() * R;
+  M = new Array2d.empty();
+  R = new Array2d.empty();
 
+  // converting iMatrix
+  for(List<double> row in iMatrix){
+    Array tempRow = new Array(row);
+    M.add(tempRow);
+  }
 
+  // converting response
+  for(List<double> row in response){
+    Array tempRow = new Array(row);
+    R.add(tempRow);
+  }
+
+  P = matrixSolve(M, R);
+
+  print(P);
 
   return List<double>();
 }
