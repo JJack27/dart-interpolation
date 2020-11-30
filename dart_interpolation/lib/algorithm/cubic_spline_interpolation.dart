@@ -57,7 +57,6 @@ List<double> cubicSplineInterpolation(
   }
 
 
-
   // filling up iMatrix
   // Filling up the value equality part
   for(int i = fromValEqual; i < toValEqual; i++){
@@ -67,7 +66,6 @@ List<double> cubicSplineInterpolation(
       iMatrix[2*i + 1][j] = pow(x[i+1], exp);
     }
   }
-
 
 
   // Filling up the first derivatives
@@ -107,7 +105,7 @@ List<double> cubicSplineInterpolation(
       if(exp < 0){
         iMatrix[i][j+4] = 0;
       }else if(exp == 0){
-        iMatrix[i][j+4] = 2;
+        iMatrix[i][j+4] = -2;
       }else{
         iMatrix[i][j+4] = -6 * x[i - fromSecDerivative + 1];
       }
@@ -130,13 +128,15 @@ List<double> cubicSplineInterpolation(
     M.add(tempRow);
   }
 
+
+
   // converting response
   for(List<double> row in response){
     Array tempRow = new Array(row);
     R.add(tempRow);
   }
+  P = matrixSolve(M, R); //  matrixDot(Minv, R);
 
-  P =  matrixSolve(M, R);
   // Interpolating xq
   int counter = 0;
   for(int i = 0; i < xq.length; i++){
